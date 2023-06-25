@@ -3,7 +3,7 @@
 #                                                                                                                                          #
 # TODO:                                                                                                                                    #
 # TASK 1: Add a Launch Site Drop-down Input Component                                                                                      #
-# TASK 2: Add a callback function to render success-pie-chart based on the selected site dropdown                                              #
+# TASK 2: Add a callback function to render success-pie-chart based on the selected site dropdown                                          #
 # TASK 3: Add a Range Slider to Select Payload                                                                                             #
 # TASK 4: Add a callback function to render the success-payload-scatter-chart scatter plot                                                 #
 #                                                                                                                                          #
@@ -97,12 +97,35 @@ def get_pie_chart(entered_site):
     return fig
 
 # TASK 4
-# add callback decorator
-@app.callback(
+# add callback decorator@app.callback(
     Output(component_id='success-payload-scatter-chart', component_property='figure'),
     [
         Input(component_id='site-dropdown', component_property='value'),
         Input(component_id='payload-slider', component_property="value")
         ])
 # Add computation to the callback function and return graph
-def get_graph(entered_site, 
+def get_graph(entered_site, entered_payload):
+    print(entered_site)
+    filtered_df =  spacex_df.copy()
+    # Select data only selected by the slider
+    data_selected_by_slider = filtered_df['Payload Mass (kg)'].between(entered_payload[0], entered_payload[1])
+    
+    if entered_site == "ALL":
+        fig = px.scatter(
+            filtered_df[data_selected_by_slider],
+            x='Payload Mass (kg)',
+            y='class',
+            color="Booster Version Category",
+            title='Correlation between Payload and Success for all Sites')
+    else:
+        fig = px.scatter(
+            filtered_df[(data_selected_by_slider) & (filtered_df['Launch Site']==entered_site)],
+            x='Payload Mass (kg)',
+            y='class',
+            color="Booster Version Category",
+            title='Correlation between Payload and Success for all Sites')
+    
+    return fig
+
+if __name__ == '__main__':
+    app.run_server()
