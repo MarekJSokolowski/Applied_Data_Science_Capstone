@@ -1,9 +1,9 @@
 ############################################################################################################################################
-# Aplication is almost entierly based on IBMs' "Build a Dashboard Application with Plotly Dash" instruction                                #
+# Aplication is almost entirely based on IBMs' "Build a Dashboard Application with Plotly Dash" instruction                                #
 #                                                                                                                                          #
 # TODO:                                                                                                                                    #
 # TASK 1: Add a Launch Site Drop-down Input Component                                                                                      #
-# TASK 2: Add a callback function to render success-pie-chart based on selected site dropdown                                              #
+# TASK 2: Add a callback function to render success-pie-chart based on the selected site dropdown                                              #
 # TASK 3: Add a Range Slider to Select Payload                                                                                             #
 # TASK 4: Add a callback function to render the success-payload-scatter-chart scatter plot                                                 #
 #                                                                                                                                          #
@@ -17,7 +17,7 @@
 
 
 
-# Importing used librares
+# Importing used libraries
 # Dashboard Handling
 import dash
 # import dash_html_components as html
@@ -90,7 +90,7 @@ def get_pie_chart(entered_site):
             filtered_df[
                 filtered_df['Launch Site']==entered_site # selecting only entered_site
                 ].groupby('class').count().reset_index(), # counting each element of class
-            values='Unnamed: 0', # first column afther grouping
+            values='Unnamed: 0', # first column after grouping
             names='class', 
             title='Total Success Lunches By {}'.format(entered_site)
         )
@@ -104,29 +104,5 @@ def get_pie_chart(entered_site):
         Input(component_id='site-dropdown', component_property='value'),
         Input(component_id='payload-slider', component_property="value")
         ])
-# Add computation to callback function and return graph
-def get_graph(entered_site, entered_payload):
-    print(entered_site)
-    filtered_df =  spacex_df.copy()
-    # Select data only selected by slider
-    data_selected_by_slider = filtered_df['Payload Mass (kg)'].between(entered_payload[0], entered_payload[1])
-    
-    if entered_site == "ALL":
-        fig = px.scatter(
-            filtered_df[data_selected_by_slider],
-            x='Payload Mass (kg)',
-            y='class',
-            color="Booster Version Category",
-            title='Correlation betwen Payload and Success for all Sites')
-    else:
-        fig = px.scatter(
-            filtered_df[(data_selected_by_slider) & (filtered_df['Launch Site']==entered_site)],
-            x='Payload Mass (kg)',
-            y='class',
-            color="Booster Version Category",
-            title='Correlation betwen Payload and Success for all Sites')
-    
-    return fig
-
-if __name__ == '__main__':
-    app.run_server()
+# Add computation to the callback function and return graph
+def get_graph(entered_site, 
